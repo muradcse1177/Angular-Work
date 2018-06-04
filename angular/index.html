@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+  <title>Angular Forms</title>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  <style>
+      .ng-valid.ng-dirty{
+          border-color: green;
+      }
+      .ng-invalid.ng-dirty{
+          border-color: red;
+      }
+  </style>
+</head>
+<body ng-app="formApp" ng-controller="formController">
+<div class="container">
+<div class="col-md-6 col-md-offset-3">
+  <div class="page-header">
+    <h1></span> Submitting Forms with Angular</h1>
+  </div>
+  <div id="messages" class="well" ng-show="message">{{ message }}</div>
+  <form ng-submit="processForm()">
+    <div id="name-group" class="form-group" ng-class="{ 'has-error' : errorName }">
+      <label>First Name</label>
+      <input type="text" name="fname" class="form-control" placeholder="Enter First Name" ng-model="formData.fname" required>
+                        <span class="help-block" ng-show="errorFName">{{ errorFName }}</span>
+    </div>
+    <div id="name-group" class="form-group" ng-class="{ 'has-error' : errorName }">
+      <label>Last Name</label>
+      <input type="text" name="lname" class="form-control" placeholder="Enter Last Name" ng-model="formData.lname" required>
+                        <span class="help-block" ng-show="errorLName">{{ errorLName }}</span>
+    </div>
+    <div id="superhero-group" class="form-group" ng-class="{ 'has-error' : errorEmail }">
+      <label>Email</label>
+      <input type="email" name="email" class="form-control" placeholder="Enter Email" ng-model="formData.email" required>
+      <span class="help-block" ng-show="errorEmail">{{ errorEmail }}</span>
+    </div>
+    <div id="superhero-group" class="form-group" ng-class="{ 'has-error' : errorPhone }">
+      <label>Phone</label>
+      <input type="text" name="phone" class="form-control" placeholder="Enter Phone" ng-model="formData.phone" required>
+      <span class="help-block" ng-show="errorPhone">{{ errorPhone }}</span>
+    </div>
+    <div id="superhero-group" class="form-group" ng-class="{ 'has-error' : errorPhone }">
+      <label>Comment</label>
+      <textarea type="text" name="comment" class="form-control" placeholder="Enter Comment" ng-trim="false" ng-model="formData.comment" required></textarea>
+      <span>Comment Length={{ formData.comment.length }}</span>
+    </div>
+    <button type="submit"  class="btn btn-success btn-lg btn-block">
+      <span class="glyphicon glyphicon-flash"></span> Submit!
+    </button>
+  </form>
+  <pre>
+    {{ formData }}
+  </pre>
+
+</div>
+</div>
+<script>
+
+    angular.module('formApp', [])
+    .controller('formController', ['$scope','$http', function($scope,$http) {
+      $scope.formData = {};
+
+      $scope.update = function(formData) {
+        console.log(formData);
+        $scope.formData = angular.copy(formData);
+      };
+      $scope.processForm = function() {
+              $http({
+                    method  : 'POST',
+                    url     : 'process.php',
+                    data    : $.param($scope.formData),  
+                    headers : { 'Content-Type': 'application/x-www-form-urlencoded' } 
+                })
+                    .then(function successCallback(response) {
+                          console.log(response.data);
+                          $scope.message = response.data.successMsg;
+                  }, function errorCallback(response) {
+
+                  });
+            };
+    }]);
+  </script>
+</body>
+</html>
